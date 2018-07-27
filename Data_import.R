@@ -3,7 +3,7 @@ library(stringr)
 library(chron)
 
 ## Import dataset (pasted from MySteamGauge.com)
-profiledata = read.csv(file = "../../20180726_Steam.txt", sep = "\t", header = T)
+profiledata = read.csv(file = "20180726_Steam.txt", sep = "\t", header = T)
 
 # rename columns
 names(profiledata) = c("type", "ID", "icon", "title", "minPlayed", "hrsPlayed", "timeToBeat", "priceUSD", "pricePerHour", "releaseDate", "developers", "publishers", "metascore", "win", "mac", "linux", "sizeMB", "sizeGB", "controller", "multiplayer", "genres")
@@ -14,16 +14,15 @@ names(profiledata) = c("type", "ID", "icon", "title", "minPlayed", "hrsPlayed", 
 profiledata$releaseDate = as.Date(profiledata$releaseDate, "%b %d, %Y")
 
 # Save separately min and max time to beat game
-#profiledata$timeToBeatMin = 
-# extract all digits in min times
-minTimes = str_extract(string = profiledata$timeToBeat, pattern = "^.*mm")
-minTimes = str_extract_all(minTimes, "[:digit:]*", simplify = T)
-#subset only columns with numeric strings
-paste(minTimes[,c(6,9)], sep = ":")
-# paste in single string
 
-# pass to chron for time formatting
-  chron(times. = , format = )
+# Select min part of string
+minTimes= str_extract(profiledata$timeToBeat, pattern = "^.*max")
+# selet hours and minutes for each entry
+minTimes = data.frame(
+  hrs = as.numeric(str_extract(str_extract(minTimes, "[:digit:]*h"), "[:digit:]*")),
+  mins = as.numeric(str_extract(str_extract(minTimes, "[:digit:]*mm"), "[:digit:]*")))
+# Convert to minutes only
+minTimes = minTimes$mins+(minTimes$hrs*60)
 
 # Save subset of only games actually played
 played = profiledata[which(profiledata$minPlayed>10),]
